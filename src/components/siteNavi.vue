@@ -34,30 +34,6 @@
 
 <script>
 export default {
-  data() {
-    return {
-      items: [
-        {
-          action: 'mdi-home',
-          subNavi: [{ title: 'home', link: '/' }],
-          title: 'home',
-        },
-        {
-          action: 'mdi-account',
-          active: true,
-          subNavi: [
-            { title: 'about', link: '/about' },
-            { title: 'hello', link: '/hello' },
-          ],
-          title: 'sub',
-        },
-        {
-          action: 'mdi-tag',
-          subNavi: [{ title: 'List 2', link: '/'  }],
-          title: 'tag',
-        },
-      ],
-    };
-  },
+  props: ["items"],
 };
 </script>
