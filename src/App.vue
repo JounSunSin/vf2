@@ -37,12 +37,12 @@ export default {
         footer: "Main Footer",
         menu: [
           {
-            action: 'mdi-home',
+            icon: 'mdi-home',
             subNavi: [{ title: 'home', link: '/' }],
             title: 'home',
           },
           {
-            action: 'mdi-account',
+            icon: 'mdi-account',
             active: true,
             subNavi: [
               { title: 'about', link: '/about' },
@@ -51,7 +51,7 @@ export default {
             title: 'sub',
           },
           {
-            action: 'mdi-tag',
+            icon: 'mdi-tag',
             subNavi: [{ title: 'List 2', link: '/'  }],
             title: 'tag',
           },

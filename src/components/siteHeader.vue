@@ -17,7 +17,7 @@
       </v-btn>
     </v-app-bar>
 
-    <v-navigation-drawer absolute temporary v-model="drawer">
+    <v-navigation-drawer app v-model="drawer" width="400">
       <site-navi :items="items"/>
     </v-navigation-drawer>
 
@@ -26,8 +26,8 @@
         <v-card-title>
           Title 수정
           <v-spacer/>
-          <v-btn icon @click.self="save"><v-icon>mdi-content-save</v-icon></v-btn>
-          <v-btn icon @click.stop="closeDialog"><v-icon>mdi-close</v-icon></v-btn>
+          <v-btn icon @click="save"><v-icon>mdi-content-save</v-icon></v-btn>
+          <v-btn icon @click="closeDialog"><v-icon>mdi-close</v-icon></v-btn>
         </v-card-title>
         <v-card-text>
           <v-text-field v-model="titleFild" outlined @keypress.enter="save" hide-details/>
