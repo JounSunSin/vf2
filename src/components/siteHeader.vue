@@ -6,15 +6,11 @@
         {{ title }}
       </v-toolbar-title>
 
-      <v-btn icon @click.stop="fixTitle"><v-icon>mdi-grease-pencil</v-icon></v-btn>      
-
+      <v-btn icon @click.stop="fixTitle">
+        <v-icon>mdi-grease-pencil</v-icon>
+      </v-btn>      
       <v-spacer />
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
+      <site-sign />
     </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer" width="400">
@@ -40,6 +36,7 @@
 
 <script>
 import siteNavi from "@/components/siteNavi";
+import siteSign from "@/components/siteSign";
 
 export default {
   props: ["title","items"],
@@ -72,6 +69,7 @@ export default {
       this.drawer = false;
     },
   },
-  components: { siteNavi },
+  components: { siteNavi, siteSign, },
 };
 </script>
+    SiteSign
