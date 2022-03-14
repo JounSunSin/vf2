@@ -28,12 +28,14 @@
             <v-icon>mdi-chevron-double-down</v-icon>
           </v-btn>
 
-
           <v-list-item-action>
             <v-btn icon @click="openNaviDialog(v)">
               <v-icon>mdi-pencil-outline</v-icon>
             </v-btn>
           </v-list-item-action>
+          <v-btn icon @click="removeItem(items, v)">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
         </template>
 
         <v-list-item v-for="(child, i) in item.subNavi" :key="i" :to="child.link">
@@ -54,6 +56,9 @@
               <v-icon>mdi-pencil-outline</v-icon>
             </v-btn>
           </v-list-item-action>
+          <v-btn icon @click.prevent="removeItem(item.subNavi, i)">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
         </v-list-item>
 
         <v-list-item @click="subNaviDialog(v, -1)">
@@ -145,6 +150,7 @@ export default {
       naviIndex : -1,
       subIndex: -1,
       ment : '',
+      selItem : 1,
     }
   },
   methods : {
@@ -171,7 +177,6 @@ export default {
       this.subDialog = true;
       this.naviIndex = index;
       this.subIndex = sub_index;
-      this.updateMenu = this.items; 
 
       if (this.subIndex > -1) {
         this.ment = '수정 서브 메뉴명';
@@ -194,6 +199,8 @@ export default {
     },
     // 서브 디비에 넣기
     async saveSubDB () {
+      this.updateMenu = this.items; 
+
       if (this.subIndex > -1) {
         this.updateMenu[this.naviIndex].subNavi[this.subIndex] = this.formItem;  
       } else {
@@ -207,7 +214,15 @@ export default {
       this.naviSave();
     },
     async naviSave () {
-      this.updateMenu["1"].active = true;
+      this.updateMenu = this.items; 
+      
+      for (let i = 0; i < this.updateMenu.length; i++) {
+        if (this.updateMenu[i].title == "sub") {
+          this.updateMenu[i].active = true;
+        } else {
+          this.updateMenu[i].active = false;
+        }
+      }
 
       try {
         await + this.$firebase.database().ref().child('site').update({menu : this.updateMenu});
@@ -218,10 +233,13 @@ export default {
     },
     // 화면 위치 변경
     moveing (items, i, arrow) {
-      this.updateMenu = items;
       const item = items.splice(i, 1)[0]
       items.splice(i + arrow, 0, item)
       this.naviSave()
+    },
+    removeItem (items, i) {
+      items.splice(i, 1);
+      this.naviSave();
     }
   },
 }

@@ -1,5 +1,5 @@
 <template>
-  <div data-app="true">
+  <div>
     <v-app-bar app color="deep-purple" dark>
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-toolbar-title>
@@ -13,7 +13,7 @@
       <site-sign />
     </v-app-bar>
 
-    <v-navigation-drawer app v-model="drawer" width="400">
+    <v-navigation-drawer v-model="drawer" width="400" app temporary absolute dark>
       <site-navi :items="items"/>
     </v-navigation-drawer>
 

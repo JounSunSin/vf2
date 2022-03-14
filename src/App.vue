@@ -1,11 +1,11 @@
 <template>
-  <div id="app">
+  <v-app id="app">
     <web-header :title="site.title" :items="site.menu"/>
     <v-main>
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
       <router-link to="/hello">Hello</router-link> |      
-      <router-link to="/test">test</router-link>      
+      <router-link to="/board">board</router-link>      
       <router-view />
 
       <div>
@@ -22,7 +22,7 @@
 
     </v-main>
     <web-footer :footer="site.footer"/> 
-  </div>
+  </v-app>
 </template>
 
 <script>
