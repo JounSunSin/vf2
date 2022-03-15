@@ -2,7 +2,12 @@
     <div>
         <v-card-title>board test</v-card-title>
         
-        <v-data-table :headers="headers" :items="mapItems" :items-per-page="3">
+        <v-data-table :headers="headers" :items="mapItems"       
+            :items-per-page="5"
+            :options.sync="options"
+            :server-items-length="serverItemsLength"
+            must-sort
+            >
             <template v-slot:[slotItem()]="{ item }">
                 <v-btn icon @click="bbsDialogOpen(item)">
                     <v-icon>mdi-pencil</v-icon>
@@ -10,6 +15,9 @@
                 <v-btn icon @click="bbsDelete(item)">
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
+            </template>
+            <template v-slot:[soltTime]="{ item }">
+                {{item.createdAt.toLocaleString()}}
             </template>
         </v-data-table>
 
@@ -46,46 +54,103 @@
 </template>
 
 <script>
+import { head, last } from 'lodash'
+
 export default {
     data() {
         return {
             headers: [
+                { value: 'createdAt', text: '작성일' }, 
                 { value: 'title' , text: '제목' },
                 { value: 'content' , text: '내용' },
-                { value: 'id' , text: 'id' },
+                { value: 'id' , text: 'id', sortable: false },
             ],
             mapItems: [],
             form: { 
                 title: '', 
-                content: '', 
+                content: '',
             },
             bbsDialog: false,
             selectItem: null,
             unsubscribe: null,
+            unsubscribeCount: null,
+            serverItemsLength: 0,
+            options: {
+                sortBy: ['createdAt'],
+                sortDesc: [true]
+            },
+            docs: [],
+        }
+    },
+    watch: {
+        options: {
+            handler (now, old) {
+                const arrow = now.page - old.pgae;
+                this.subscribe(arrow);
+            },
+            deep: true
         }
     },
     created () {
-        this.subscribe();
+
     },
     destroyed () {
         if (this.unsubscribe) {
             this.unsubscribe();
         }
+        if (this.unsubscribeCount) {
+            this.unsubscribeCount()
+        }
     },
     methods: {
-        slotItem () {
+        slotItem() {
             return 'item.id'; 
         },
-        subscribe() {
-            this.unsubscribe = this.$firebase.firestore().collection('board').onSnapshot((sn) => {
+        soltTime() {
+            return 'item.createdAt';
+        },
+        subscribe(arrow) {
+            const basicQuery = this.$firebase.firestore();
+
+            this.unsubscribeCount = basicQuery.collection('meta').doc('board').onSnapshot((doc) => {
+                
+                if (!doc.exists) { 
+                    return 
+                }
+                this.serverItemsLength = doc.data().count
+            });
+
+            const order = head(this.options.sortBy);
+            const sort = head(this.options.sortDesc) ? 'desc' : 'asc';
+            const limit = this.options.itemsPerPage;            
+            const ref = basicQuery.collection('board').orderBy(order, sort);
+            let query;
+
+            switch (arrow) {
+                case -1: query = ref.endBefore(head(this.docs)).limitToLast(limit)
+
+                break
+                case 1: query = ref.startAfter(last(this.docs)).limit(limit)
+                break
+
+                default: query = ref.limit(limit)
+                break
+            }
+
+            this.unsubscribe = query.onSnapshot((sn) => {            
                 if (sn.empty) {
                     this.mapItems = [];
                     return;
                 } else {
+                    this.docs = sn.docs;
+
                     this.mapItems = sn.docs.map( v => {
                         const item = v.data();
                         return {
-                            id: v.id, title: item.title, content: item.content
+                            id: v.id, 
+                            title: item.title, 
+                            content: item.content, 
+                            createdAt: item.createdAt.toDate(),
                         }
                     });
                 }
@@ -104,7 +169,10 @@ export default {
             }
         },
         bbsFix (ment) {
+            
             if (ment === 'save') {
+                this.form.createdAt = new Date();
+
                 this.$firebase.firestore().collection('board').add(this.form);
             } else {
                 this.$firebase.firestore().collection('board').doc(this.selectItem.id).update(this.form);

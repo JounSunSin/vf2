@@ -31,16 +31,16 @@ exports.deleteUser = functions.auth.user().onDelete(async (user) => {
 });
 
 // eslint-disable-next-line no-unused-vars
-exports.incrementBoardCount = functions.firestore.document('boards/{bid}').onCreate(async (snap, context) => {
+exports.incrementBoardCount = functions.firestore.document('board/{bid}').onCreate(async (snap, context) => {
     
   try {
-    await fdb.collection('meta').doc('boards').update('count', admin.firestore.FieldValue.increment(1))
+    await fdb.collection('meta').doc('board').update('count', admin.firestore.FieldValue.increment(1))
   } catch (e) {
-    await fdb.collection('meta').doc('boards').set({ count: 1 })
+    await fdb.collection('meta').doc('board').set({ count: 1 })
   }
 });
 
 // eslint-disable-next-line no-unused-vars
-exports.decrementBoardCount = functions.firestore.document('boards/{bid}').onDelete(async(snap, context) => {
-    await fdb.collection('meta').doc('boards').update('count', admin.firestore.FieldValue.increment(-1))
+exports.decrementBoardCount = functions.firestore.document('board/{bid}').onDelete(async(snap, context) => {
+    await fdb.collection('meta').doc('board').update('count', admin.firestore.FieldValue.increment(-1))
 });
